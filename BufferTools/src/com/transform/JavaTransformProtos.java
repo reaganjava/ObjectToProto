@@ -6,14 +6,20 @@ import java.lang.reflect.Field;
 import com.pojo.Member;
 import com.pojo.Order;
 import com.pojo.annotation.Proto;
+import com.pojo.annotation.Fields;
 
 
 public class JavaTransformProtos {
 
 	public void objectTransform(Class<?> clazz) {
 		Proto proto = clazz.getAnnotation(Proto.class);
-		String packageName = proto.packageName();
-		String className = proto.className();
+		String packageName = "option java_package = \"" + proto.packageName() + "\"";
+		String className = "option java_outer_classname = \"" + proto.className() + "\"";
+		String name = "message " + clazz.getName() + " {";
+		for(Field field : clazz.getFields()) {
+			Fields fieldAnno = field.getAnnotation(Fields.class);
+			fieldAnno.
+		}
 	}
 	
 	public static void main(String[] args) throws Exception {

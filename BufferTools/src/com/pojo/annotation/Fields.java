@@ -7,7 +7,7 @@ import java.lang.annotation.ElementType;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD) 
-public @interface Field {
+public @interface Fields {
 	String fieldType() default "optional";
 	String fieldName() default "";
 	String paramType() default "";
