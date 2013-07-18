@@ -9,13 +9,13 @@ import com.buffer.annotation.Proto;
 @Proto(protoPackage="com.test", packageName="com.pojo", className="MemberOrder")
 public class Member {
 
-	@Fields(fieldType="required", fieldName="uid", paramType="int64", fieldIndex=1)
+	@Fields(fieldType="required", fieldName="uid", protoType="int64", fieldIndex=1)
 	private long uid;
 	
-	@Fields(fieldType="optional", fieldName="username", paramType="string", fieldIndex=2)
+	@Fields(fieldType="optional", fieldName="username", protoType="string", fieldIndex=2)
 	private String username;
 	
-	@Fields(fieldType="optional", fieldName="password", paramType="string", fieldIndex=3)
+	@Fields(fieldType="optional", fieldName="password", protoType="string", fieldIndex=3)
 	private String password;
 	
 	@Fields(mapping="com.pojo.Order")

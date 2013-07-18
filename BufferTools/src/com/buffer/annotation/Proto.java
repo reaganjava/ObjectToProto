@@ -9,7 +9,7 @@ import java.lang.annotation.ElementType;
 @Target(ElementType.TYPE) 
 public @interface Proto {
 	String protoPackage() default "";
-	String packageName() default "com.pojo";
+	String packageName() default "";
 	String className() default "";
 	boolean subClass() default false;
 }
