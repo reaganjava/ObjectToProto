@@ -18,7 +18,7 @@ public class Member {
 	@Fields
 	private String password;
 	
-	@Fields(mapping="com.pojo.Order")
+	@Fields(fieldType="repeated", mapping="com.pojo.Order")
 	private List<Order> orders = new ArrayList<Order>();
 
 	public long getUid() {

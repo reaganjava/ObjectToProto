@@ -115,91 +115,89 @@ public class JavaTransformProtos {
 				Fields fieldAnno = field.getAnnotation(Fields.class);
 				if(fieldAnno != null) {
 					
-					String fieldType = fieldAnno.fieldType();
-					String fieldName = fieldAnno.fieldName();
-					String protoType = fieldAnno.protoType();
-					int index = fieldAnno.fieldIndex();
-					String mapping = fieldAnno.mapping();
-					String defValue = fieldAnno.defValue();
-					String enums = fieldAnno.enums();
-					if(mapping.equals("")) {
-						if(!fieldType.equals("")) {
-							protoField += fieldType;
-						}
-						
-						if(!protoType.equals("")) {
-							protoField += " " + protoType;
-						} else if(enums.equals("")){
-							protoType = TypeHandler.getProtoType(field.getType().getName());
-							if(protoType == null) {
-								throw new Exception("@Fields mapping error Class can not find");
-							}
-							protoField += " " + protoType;
-						} else {
-							Class<?> enumClass = Class.forName(enums);
-							int enumIndex = 1;
-							String enumName = enumClass.getSimpleName();
-							enumType = "enum " + enumName + " {\n";
-							
-							for(Field enumField : enumClass.getFields()) {
-								enumType += enumField.getName() + "=" + enumIndex + ";\n";
-								enumIndex++;
-							}
-							enumType += "}\n";
-							protoFields += enumType;
-							protoField += " " + enumName;
-						}
-						
-						if(!fieldName.equals("")) {
-							protoField += " " + fieldName;
-						} else {
-							protoField += " " + field.getName(); 
-						}
-						
-						if(index != -1) {
-							protoField += " = " + index;
-						} else {
-							protoField += " = " + defaultIndex; 
-						}
-						
-						if(!defValue.equals("")) {
-							switch(protoType) {
-								case "string" : {
-									defValue = "\"" + defValue + "\"";
-									break;
-								}
-								case "float" : {
-									defValue = "" + Float.parseFloat(defValue);
-									break;
-								}
-								case "double" : {
-									defValue = "" + Double.parseDouble(defValue);
-									break;
-								}
-								case "int32":
-								case "int64": {
-									defValue = "" + Integer.parseInt(defValue);
-									break;
-								}
-							}
-							protoField += " [default = " + defValue + "]";
-						}
-						
-						protoFields += protoField +";\n";
-						protoField = "";
-					} else {
-						if(!mapping.equals("")) {
-							Class<?> mappingClazz = Class.forName(mapping);
-							subProto = transform(mappingClazz);
-						}	
+				String fieldType = fieldAnno.fieldType();
+				String fieldName = fieldAnno.fieldName();
+				String protoType = fieldAnno.protoType();
+				int index = fieldAnno.fieldIndex();
+				String mapping = fieldAnno.mapping();
+				String defValue = fieldAnno.defValue();
+				String enums = fieldAnno.enums();
+				
+					if(!fieldType.equals("")) {
+						protoField += fieldType;
 					}
+					
+					if(!protoType.equals("")) {
+						protoField += " " + protoType;
+					} else if(enums.equals("") && mapping.equals("")){
+						protoType = TypeHandler.getProtoType(field.getType().getName());
+						if(protoType == null) {
+							throw new Exception("@Fields mapping error Class can not find");
+						}
+						protoField += " " + protoType;
+					} else if(!enums.equals("")){
+						Class<?> enumClass = Class.forName(enums);
+						int enumIndex = 1;
+						String enumName = enumClass.getSimpleName();
+						enumType = "enum " + enumName + " {\n";
+						
+						for(Field enumField : enumClass.getFields()) {
+							enumType += enumField.getName() + "=" + enumIndex + ";\n";
+							enumIndex++;
+						}
+						enumType += "}\n";
+						protoFields += enumType;
+						protoField += " " + enumName;
+					}
+					
+					if(!mapping.equals("")) {
+						Class<?> mappingClazz = Class.forName(mapping);
+						subProto = transform(mappingClazz);
+						protoFields += subProto;
+						protoField += " " + mappingClazz.getSimpleName();
+					}
+					
+					if(!fieldName.equals("")) {
+						protoField += " " + fieldName;
+					} else {
+						protoField += " " + field.getName(); 
+					}
+					
+					if(index != -1) {
+						protoField += " = " + index;
+					} else {
+						protoField += " = " + defaultIndex; 
+					}
+					
+					if(!defValue.equals("")) {
+						switch(protoType) {
+							case "string" : {
+								defValue = "\"" + defValue + "\"";
+								break;
+							}
+							case "float" : {
+								defValue = "" + Float.parseFloat(defValue);
+								break;
+							}
+							case "double" : {
+								defValue = "" + Double.parseDouble(defValue);
+								break;
+							}
+							case "int32":
+							case "int64": {
+								defValue = "" + Integer.parseInt(defValue);
+								break;
+							}
+						}
+						protoField += " [default = " + defValue + "]";
+					}
+	
+					protoFields += protoField +";\n";
+					protoField = "";
 					defaultIndex++;
 				}
 			}
 			protoFile = protoPackage + packageName + className + messageName + protoFields;
-			if(subProto != null) {
-				protoFile += subProto;
-			}
 			protoFile += "}\n";
 			return protoFile;
 		} else {
