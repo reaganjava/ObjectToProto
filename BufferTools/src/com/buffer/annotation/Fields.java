@@ -13,4 +13,5 @@ public @interface Fields {
 	String protoType() default "";
 	String mapping() default "";
 	int fieldIndex() default -1;
+	String defValue() default "";;
 }

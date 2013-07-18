@@ -118,6 +118,7 @@ public class JavaTransformProtos {
 					String protoType = fieldAnno.protoType();
 					int index = fieldAnno.fieldIndex();
 					String mapping = fieldAnno.mapping();
+					String defValue = fieldAnno.defValue();
 					if(mapping.equals("")) {
 						if(!fieldType.equals("")) {
 							protoField += fieldType;
@@ -143,6 +144,10 @@ public class JavaTransformProtos {
 							protoField += " = " + index + ";\n";
 						} else {
 							protoField += " = " + defaultIndex + ";\n"; 
+						}
+						
+						if(!defValue.equals("")) {
+							protoField += "[default = " + defValue + "]\n";
 						}
 					} else {
 						if(!mapping.equals("")) {
