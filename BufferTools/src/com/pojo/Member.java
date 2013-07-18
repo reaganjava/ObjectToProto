@@ -3,13 +3,13 @@ package com.pojo;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.pojo.annotation.Fields;
-import com.pojo.annotation.Proto;
+import com.buffer.annotation.Fields;
+import com.buffer.annotation.Proto;
 
-@Proto(packageName="com.pojo", className="MemberOrder")
+@Proto(protoPackage="com.test", packageName="com.pojo", className="MemberOrder")
 public class Member {
 
-	@Fields(fieldType="required", fieldName="uid", paramType="long", fieldIndex=1)
+	@Fields(fieldType="required", fieldName="uid", paramType="int64", fieldIndex=1)
 	private long uid;
 	
 	@Fields(fieldType="optional", fieldName="username", paramType="string", fieldIndex=2)
@@ -18,7 +18,7 @@ public class Member {
 	@Fields(fieldType="optional", fieldName="password", paramType="string", fieldIndex=3)
 	private String password;
 	
-	@Fields(fieldType="optional", fieldName="password", paramType="com.pojo.Order", fieldIndex=4)
+	@Fields(mapping="com.pojo.Order")
 	private List<Order> orders = new ArrayList<Order>();
 
 	public long getUid() {

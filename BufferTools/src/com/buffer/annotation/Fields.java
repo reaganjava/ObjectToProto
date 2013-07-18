@@ -1,4 +1,4 @@
-package com.pojo.annotation;
+package com.buffer.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -8,8 +8,9 @@ import java.lang.annotation.ElementType;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD) 
 public @interface Fields {
-	String fieldType() default "optional";
+	String fieldType() default "";
 	String fieldName() default "";
 	String paramType() default "";
-	int fieldIndex() default 0;
+	String mapping() default "";
+	int fieldIndex() default -1;
 }

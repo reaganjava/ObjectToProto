@@ -1,9 +1,15 @@
 package com.pojo;
 
+import com.buffer.annotation.Fields;
+import com.buffer.annotation.Proto;
+
+@Proto(subClass=true)
 public class Order {
 
+	@Fields(fieldType="required", fieldName="orderId", paramType="int32", fieldIndex=1)
 	private int orderId;
 	
+	@Fields(fieldType="optional", fieldName="productName", paramType="string", fieldIndex=2)
 	private String productName;
 	
 	private Member member;

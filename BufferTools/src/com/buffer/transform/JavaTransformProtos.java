@@ -1,4 +1,4 @@
-package com.transform;
+package com.buffer.transform;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -6,13 +6,11 @@ import java.io.FileOutputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 
-import com.pojo.annotation.Proto;
-import com.pojo.annotation.Fields;
+import com.buffer.annotation.Fields;
+import com.buffer.annotation.Proto;
 
 
 public class JavaTransformProtos {
-	
-	private String protoPackage = "";
 	
 	private String srcClassPath = "";
 	
@@ -22,11 +20,13 @@ public class JavaTransformProtos {
 	
 	private String projectDir = "";
 	
-	public JavaTransformProtos(String protoPackage, String classPackage, String protoFileDir) throws Exception {
-		this.protoPackage = protoPackage;
+	public JavaTransformProtos(String classPackage, String protoFileDir) throws Exception {
 		File currentFile = new File("");
 		projectDir = currentFile.getCanonicalPath();
+		classPackage = classPackage.replace(".", "/");
+		System.out.println(classPackage);
 		this.srcClassPath = projectDir + "/src/" + classPackage;
+		System.out.println(srcClassPath);
 		this.protoFilePath = projectDir + protoFileDir;
 		File protoDir = new File(this.protoFilePath);
 		if(!protoDir.isDirectory()) {
@@ -38,6 +38,7 @@ public class JavaTransformProtos {
 		File pojoPackage = new File(srcClassPath);
 		for(String classFile : pojoPackage.list()) {
 			String className = classFile.replace(".java", ".class");
+			System.out.println(className);
 			Class<?> clazz = Class.forName(className);
 			String protoFile = transform(clazz);
 			protoFileName = clazz.getSimpleName() + "Proto.proto";
@@ -73,8 +74,10 @@ public class JavaTransformProtos {
 		Proto proto = clazz.getAnnotation(Proto.class);
 		if(proto != null && !proto.subClass()) {
 			String protoFile = "";
+			String protoPackage = "";
 			String packageName = "";
 			String className = "";
+			protoPackage = proto.protoPackage() + "\n";
 			if(!proto.subClass()) {
 				packageName = "option java_package = \"" + proto.packageName() + "\";\n";
 				className = "option java_outer_classname = \"" + proto.className() + "\";\n";
@@ -116,7 +119,7 @@ public class JavaTransformProtos {
 					
 				}
 			}
-			protoFile = packageName + className + messageName + protoField;
+			protoFile = protoPackage + packageName + className + messageName + protoField;
 			if(subProto != null) {
 				protoFile += subProto;
 			}
@@ -128,7 +131,7 @@ public class JavaTransformProtos {
 	}
 	
 	public static void main(String[] args) throws Exception {
-		
-		
+		JavaTransformProtos jtp = new JavaTransformProtos("com.pojo", "proto");
+		jtp.startTransform();
 	}
 }
