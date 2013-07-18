@@ -59,7 +59,7 @@ public class JavaTransformProtos {
 				}
 			}
 		}
-		//buildJava();
+		buildJava();
 	}
 	
 	public void buildJava() throws Exception {
@@ -141,14 +141,35 @@ public class JavaTransformProtos {
 						}
 						
 						if(index != -1) {
-							protoField += " = " + index + ";\n";
+							protoField += " = " + index;
 						} else {
-							protoField += " = " + defaultIndex + ";\n"; 
+							protoField += " = " + defaultIndex; 
 						}
 						
 						if(!defValue.equals("")) {
-							protoField += "[default = " + defValue + "]\n";
+							switch(protoType) {
+								case "string" : {
+									defValue = "\"" + defValue + "\"";
+									break;
+								}
+								case "float" : {
+									defValue = "" + Float.parseFloat(defValue);
+									break;
+								}
+								case "double" : {
+									defValue = "" + Double.parseDouble(defValue);
+									break;
+								}
+								case "int32":
+								case "int64": {
+									defValue = "" + Integer.parseInt(defValue);
+									break;
+								}
+							}
+							protoField += " [default = " + defValue + "]";
 						}
+						
+						protoField +=";\n";
 					} else {
 						if(!mapping.equals("")) {
 							Class<?> mappingClazz = Class.forName(mapping);
