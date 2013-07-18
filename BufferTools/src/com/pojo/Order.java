@@ -11,6 +11,9 @@ public class Order {
 	
 	@Fields(fieldType="optional", fieldName="productName", protoType="string", fieldIndex=2)
 	private String productName;
+
+	@Fields(enums="com.pojo.OrderType", defValue="BUY")
+	private OrderType orderType; 
 	
 	private Member member;
 
@@ -37,5 +40,12 @@ public class Order {
 	public void setMember(Member member) {
 		this.member = member;
 	}
-	
+
+	public OrderType getOrderType() {
+		return orderType;
+	}
+
+	public void setOrderType(OrderType orderType) {
+		this.orderType = orderType;
+	}
 }

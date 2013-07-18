@@ -106,10 +106,12 @@ public class JavaTransformProtos {
 				}
 			}
 			String messageName = "message " + clazz.getSimpleName() + " {\n";
-			String protoField = "";
+			String protoFields = "";
 			String subProto = "";
+			String enumType = "";
 			int defaultIndex = 1;
 			for(Field field : clazz.getDeclaredFields()) {
+				String protoField = "";
 				Fields fieldAnno = field.getAnnotation(Fields.class);
 				if(fieldAnno != null) {
 					
@@ -119,6 +121,7 @@ public class JavaTransformProtos {
 					int index = fieldAnno.fieldIndex();
 					String mapping = fieldAnno.mapping();
 					String defValue = fieldAnno.defValue();
+					String enums = fieldAnno.enums();
 					if(mapping.equals("")) {
 						if(!fieldType.equals("")) {
 							protoField += fieldType;
@@ -126,12 +129,25 @@ public class JavaTransformProtos {
 						
 						if(!protoType.equals("")) {
 							protoField += " " + protoType;
-						} else {
+						} else if(enums.equals("")){
 							protoType = TypeHandler.getProtoType(field.getType().getName());
 							if(protoType == null) {
 								throw new Exception("@Fields mapping error Class can not find");
 							}
 							protoField += " " + protoType;
+						} else {
+							Class<?> enumClass = Class.forName(enums);
+							int enumIndex = 1;
+							String enumName = enumClass.getSimpleName();
+							enumType = "enum " + enumName + " {\n";
+							
+							for(Field enumField : enumClass.getFields()) {
+								enumType += enumField.getName() + "=" + enumIndex + ";\n";
+								enumIndex++;
+							}
+							enumType += "}\n";
+							protoFields += enumType;
+							protoField += " " + enumName;
 						}
 						
 						if(!fieldName.equals("")) {
@@ -169,7 +185,8 @@ public class JavaTransformProtos {
 							protoField += " [default = " + defValue + "]";
 						}
 						
-						protoField +=";\n";
+						protoFields += protoField +";\n";
+						protoField = "";
 					} else {
 						if(!mapping.equals("")) {
 							Class<?> mappingClazz = Class.forName(mapping);
@@ -179,7 +196,7 @@ public class JavaTransformProtos {
 					defaultIndex++;
 				}
 			}
-			protoFile = protoPackage + packageName + className + messageName + protoField;
+			protoFile = protoPackage + packageName + className + messageName + protoFields;
 			if(subProto != null) {
 				protoFile += subProto;
 			}
